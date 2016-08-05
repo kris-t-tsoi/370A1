@@ -14,18 +14,27 @@ class MessageProc():
 
 	#start up a new process and return process id to parent process
 	def start(self):
-		pass
+		
+
+		#fork
+		pid = os.fork()
+
+		if pid == 0:
+			print("child")
+
+			
+
+			#kill child for now
+			sys.exit(0)
+		else:
+			print("parent")
+
+		#child calls main()
 
 
 
-	#fork
-
-
-	#child calls main()
-
-
-
-
+		#return process id of child to parent process
+		#return
 
 
 
