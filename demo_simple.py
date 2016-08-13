@@ -4,7 +4,13 @@ import sys
 class Consumer(MessageProc):
 
     def main(self):
+        print("child fork in child main fuction")
         super().main()
+        print("child fork in child main fuction fuck yes")
+        
+        #kill just in case
+        sys.exit(0)
+		
         while True:
             self.receive(
                 Message(
