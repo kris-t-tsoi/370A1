@@ -56,17 +56,24 @@ class MessageProc():
 	#check message does not exist in queue and remove executed messages
 	def receive(self, *messages):
 		
-		#print('in recieve')
+		print('in recieve')
 		
 		#child fork recieves the message
 		
-		#for mess in messages:
-			#print('message action '+str(mess.messAction))
-				
-				#if message ID is ANY then execute first item in give queue
-				#if mess.messageID == 'ANY'
-		
+		for mess in messages:
+			
+			#if message ID is ANY then execute first item in give queue
+			if mess.messageID == 'ANY':
+				pass
+			
+			else:
+				pass
+			
+			
+			#put time out here
+			
 		pass
+		
 		
 
 
@@ -74,13 +81,10 @@ class Message():
 	
 	def __init__(self,messageID, action):
 		
-		pass
+		self.messageID = messageID
+		self.action=action
 		
-		
-		#self.messageID = messageID
-		#self.action=action
-		
-		#print('messAction '+str(messAction))
+		print('action '+str(action))
 		#pass
 		
 class TimeOut():
