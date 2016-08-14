@@ -4,14 +4,15 @@ import sys
 class Consumer(MessageProc):
 
     def main(self):
-        print("child fork in child main fuction")
         super().main()
-        print("child fork in child main fuction fuck yes")
         
-        #kill just in case
-        sys.exit(0)
-		
+        n=1
+        		
         while True:
+            
+            print('in true loop times'+str(n))
+            n=n+1
+            
             self.receive(
                 Message(
                     'data',
@@ -25,5 +26,6 @@ if __name__=='__main__': # really do need this
     me.main()
     consumer = Consumer().start()
     for num in range(1000):
+        print('num is '+str(num))
         me.give(consumer, 'data', num + 1)
     me.give(consumer, 'stop')

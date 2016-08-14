@@ -6,6 +6,9 @@ class MessageProc():
 	#set up communication mechanism (named pipes)
 	def main (self):
 		print("main method in parent")
+		
+		#create named pipe
+		os.mkfifo('/tmp/pipe'+str(os.getpid()))
 
 	
 
@@ -34,34 +37,52 @@ class MessageProc():
 
 
 	#send the input parameter message items it receives to the recieve()
+	#pid - pid of fork that sent the message
+	#messageID - id type of message sent (what is checked in recieve)
+	#values - not nessary to pass in
 	def give(self, pid, messageID, *values):
 		
 		#parent fork gives the message
 		
-		pass
+		print('in give()')
+		print('messageID is '+str(messageID))
 
 
 
 
 
 	#check message does not exist in queue and remove exectued messages
-	def recieve(self):
+	def receive(self, *messages) :
+		
+		print('in recieve')
 		
 		#child fork recieves the message
 		
+		for mess in messages:
+			print('message action '+str(mess.messAction))
+				
+				#if message ID is ANY then execute first item in give queue
+				#if mess.messageID == 'ANY'
+		
+		
 		pass
-		#when all messages have been exceuted then close the child and parent fork named pipes
 
 
 class Message():
-
-	#class constructor
-	def _init_(self,messageID, messageAction):
-		pass
-
-
+	
+	messageID = None
+	messageAction = None
+	
+	def _init_(self,messID, messAction):
+		
+		
+		
+		print('messAction '+str(messAction))
+		messageID = str(messID)
+		messageAction = str(messAction)
+		
+		
+		
+		
 class TimeOut():
 	pass
-
-
-
