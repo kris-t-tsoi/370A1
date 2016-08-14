@@ -29,14 +29,6 @@ class MessageProc():
 		else:
 			print("parent")
 
-		#child calls main()
-
-
-
-		#return process id of child to parent process
-		#return
-
-
 
 
 	#send the input parameter message items it receives to the recieve()
