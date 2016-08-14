@@ -44,45 +44,44 @@ class MessageProc():
 		
 		#parent fork gives the message
 		
-		print('in give()')
-		print('messageID is '+str(messageID))
-
-
-
-
-
-	#check message does not exist in queue and remove exectued messages
-	def receive(self, *messages) :
-		
-		print('in recieve')
-		
-		#child fork recieves the message
-		
-		for mess in messages:
-			print('message action '+str(mess.messAction))
-				
-				#if message ID is ANY then execute first item in give queue
-				#if mess.messageID == 'ANY'
-		
+		#print('in give()')
+		#print('messageID is '+str(messageID))
 		
 		pass
 
 
+
+
+
+	#check message does not exist in queue and remove executed messages
+	def receive(self, *messages):
+		
+		#print('in recieve')
+		
+		#child fork recieves the message
+		
+		#for mess in messages:
+			#print('message action '+str(mess.messAction))
+				
+				#if message ID is ANY then execute first item in give queue
+				#if mess.messageID == 'ANY'
+		
+		pass
+		
+
+
 class Message():
 	
-	messageID = None
-	messageAction = None
-	
-	def _init_(self,messID, messAction):
+	def __init__(self,messageID, action):
+		
+		pass
 		
 		
+		#self.messageID = messageID
+		#self.action=action
 		
-		print('messAction '+str(messAction))
-		messageID = str(messID)
-		messageAction = str(messAction)
-		
-		
-		
+		#print('messAction '+str(messAction))
+		#pass
 		
 class TimeOut():
 	pass
