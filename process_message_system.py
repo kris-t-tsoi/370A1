@@ -9,19 +9,19 @@ class MessageProc():
 
     def __init__(self):
         # Get threading condition
-        self.messageCondition = threading.Condition()
+        #self.messageCondition = threading.Condition()
+        pass
 
 
     # set up communication mechanism (named pipes)
     def main(self):
-        print("main method in parent")
 
         # create named pipe
         os.mkfifo('/tmp/pipe' + str(os.getpid()))
 
         # set up thread
-        read_thread = threading.Thread(target=self.receive, daemon=True)
-        read_thread.start()
+        #read_thread = threading.Thread(target=self.receive, daemon=True)
+        #read_thread.start()
 
 
 
@@ -41,11 +41,12 @@ class MessageProc():
             # return pid of the child fork
             return pid
 
+
     # send the input parameter message items it receives to the recieve()
     # pid - pid of child fork
     # messageID - id type of message sent (what is checked in recieve)
     # values - not nessary to pass in
-    def give(self, pid, messageID, values):
+    def give(self, pid, messageID, *values):
 
         pipe = '/tmp/pipe' + str(pid)
 
@@ -68,9 +69,9 @@ class MessageProc():
 
         # From Tutorial 3 code
         # Automatic acquire/release of the underlying lock
-        with self.messageCondition:
+       # with self.messageCondition:
             # notify the waiting thread that the resource is now ready
-            self.messageCondition.notify()
+        #    self.messageCondition.notify()
 
 
         # parent fork gives the message
@@ -106,11 +107,25 @@ class MessageProc():
             print('data ' + str(message[1]))
             print('value ' + str(message[2]))
 
+
+            for mess in messages:
+                if mess.messageID == 'ANY':
+                    mess.action()
+                elif mess.messageID == message[1]:
+                    print('match')
+                    print(str(mess.action))
+                    print(message[2])
+                else:
+                    pass
+
+
+
+
             # From Tutorial 3 code
             # Automatic acquire/release of the underlying lock
-            with self.messageCondition:
+           # with self.messageCondition:
                 # notify the waiting thread that the resource is now ready
-                self.messageCondition.wait()
+            #    self.messageCondition.wait()
 
 
 
