@@ -103,18 +103,13 @@ class MessageProc():
             message = pickle.load(fifo)
 
             print('receive'+str(message))
-            print('pid ' + str(message[0]))
-            print('data ' + str(message[1]))
-            print('value ' + str(message[2]))
-
 
             for mess in messages:
                 if mess.messageID == 'ANY':
                     mess.action()
                 elif mess.messageID == message[1]:
                     print('match')
-                    print(str(mess.action))
-                    print(message[2])
+                    mess.action(message[2])
                 else:
                     pass
 
