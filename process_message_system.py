@@ -1,7 +1,6 @@
 import sys
 import os
 import pickle
-
 import time
 
 
@@ -42,7 +41,7 @@ class MessageProc():
 	#messageID - id type of message sent (what is checked in recieve)
 	#values - not nessary to pass in
 	def give(self, pid, messageID, *values):
-		
+
 		pipe = '/tmp/pipe'+str(pid)
 		
 		#check communitcation process is up else sleep for a bit
@@ -58,6 +57,10 @@ class MessageProc():
 		tup.append(messageID)
 		tup.append(values)
 		pickle.dump(tup,fifo)
+		#check communitcation process is up else sleep for a bit
+		
+		
+		#parent fork gives the message
 		
 		#print('in give()')
 		#print('messageID is '+str(messageID))
@@ -98,7 +101,7 @@ class MessageProc():
 			#put time out here
 			
 		pass
-		
+
 	#what to do when system ends
 	def removeGarbage(self):
 		pass

@@ -7,7 +7,7 @@ class Consumer(MessageProc):
         super().main()
         
         n=0
-        
+
         while True:
             self.receive(
                 Message(
