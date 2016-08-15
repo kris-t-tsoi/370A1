@@ -1,5 +1,6 @@
 import sys
 import os
+import pickle
 
 class MessageProc():
 
@@ -31,18 +32,23 @@ class MessageProc():
 		else:
 			print("parent")
 			print("messageproc parent fork pid", os.getpid())
-			#return pid of the parent fork
-			return os.getpid()
+			#return pid of the child fork
+			return pid
 
 
 
 	#send the input parameter message items it receives to the recieve()
-	#pid - pid of fork that sent the message
+	#pid - pid of child fork 
 	#messageID - id type of message sent (what is checked in recieve)
 	#values - not nessary to pass in
 	def give(self, pid, messageID, *values):
 		
+		#check communitcation process is up else sleep for a bit
+		
+		
 		#parent fork gives the message
+		
+		
 		
 		#print('in give()')
 		#print('messageID is '+str(messageID))
@@ -51,12 +57,12 @@ class MessageProc():
 
 
 
-
+#check out os atExit and clean up named pipes
 
 	#check message does not exist in queue and remove executed messages
 	def receive(self, *messages):
 		
-		print('in recieve')
+		
 		
 		#child fork recieves the message
 		
@@ -84,7 +90,6 @@ class Message():
 		self.messageID = messageID
 		self.action=action
 		
-		print('action '+str(action))
 		#pass
 		
 class TimeOut():
