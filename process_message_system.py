@@ -11,6 +11,7 @@ ANY = 'any'
 
 class MessageProc():
     communcation_queue = queue.Queue()
+    passed_data_list = []
 
     # set up communication mechanism (named pipes)
     def main(self):
@@ -66,6 +67,8 @@ class MessageProc():
 
         pickle.dump(tup, fifo)
 
+        print(tup)
+
     # check out os atExit and clean up named pipes
 
     # check message does not exist in queue and remove executed messages
@@ -76,6 +79,8 @@ class MessageProc():
 
             # Check if queue is not empty, else wait for thread condition
             if not self.communcation_queue.empty():
+
+                print('queue not empty')
 
                 # get data from queue
                 data = self.communcation_queue.get()
@@ -94,6 +99,26 @@ class MessageProc():
                             value = mess.action(data[2])
 
                         return value
+
+                    #not what we want so put unused data into list
+                    else:
+                        print('append into list')
+                        print(data)
+                        self.passed_data_list.append(data)
+
+
+            elif not self.passed_data_list:
+
+                print('move from list to queue')
+
+                while True:
+                    item = self.passed_data_list.pop()
+                    print(item)
+                    self.communcation_queue.put(item)
+                    if not self.passed_data_list:
+                        print('end of list')
+                        break
+
 
             else:
                 # From Tutorial 3 code
