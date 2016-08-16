@@ -6,9 +6,10 @@ import threading
 import atexit
 import queue
 
+#state global variables
 ANY = 'any'
 
-
+#------------------------------------------------------------------------------------
 class MessageProc():
     communcation_queue = queue.Queue()
     passed_data_list = []
@@ -88,14 +89,16 @@ class MessageProc():
 
                     if mess.messageID == ANY or data[1] == mess.messageID:
 
-                        # if there is no value given
-                        if len(data) == 2:
-                            value = mess.action()
+                        if mess.guard == None or mess.guard():
 
-                        else:
-                            value = mess.action(data[2])
+                            # if there is no value given
+                            if len(data) == 2:
+                                value = mess.action()
 
-                        return value
+                            else:
+                                value = mess.action(data[2])
+
+                            return value
 
                     #not what we want so put unused data into list
                     else:
@@ -121,6 +124,8 @@ class MessageProc():
                     # notify the waiting thread that the resource is now ready
                     self.arriveCondition.wait()
 
+
+
     # taken from Robert's lecture recording 9 video
     def extract_from_pipe(self):
 
@@ -138,6 +143,8 @@ class MessageProc():
                     time.sleep(0.01)
 
 
+
+# ------------------------------------------------------------------------------------
 # what to do when system ends
 def removeGarbagePipes ():
     tmpPath = '/tmp'
@@ -149,14 +156,15 @@ def removeGarbagePipes ():
 #at end of process do this
 atexit.register(removeGarbagePipes)
 
-
+#------------------------------------------------------------------------------------
 class Message():
-    def __init__(self, messageID, action):
+    def __init__(self, messageID, guard = None, action=None):
         self.messageID = messageID
         self.action = action
+        self.guard = guard
 
         # pass
 
-
+#------------------------------------------------------------------------------------
 class TimeOut():
     pass

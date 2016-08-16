@@ -1,4 +1,5 @@
 from process_message_system import *
+import os
 
 class Ordered(MessageProc):
 
@@ -38,3 +39,20 @@ if __name__=='__main__':
     me.give(ordered, 'four')
 
     me.give(ordered, 'go')
+
+
+#
+#
+# class SecondProc(MessageProc):
+#
+#     def main(self):
+#         super().main()
+#         print(os.getpid())
+#
+#
+#
+#
+# if __name__ == '__main__':
+#     example = SecondProc().start()
+#     print(os.getpid())
+
