@@ -5,8 +5,8 @@ class Consumer(MessageProc):
 
     def main(self):
         super().main()
-        
-        n=0
+
+        #n=0
 
         while True:
             self.receive(
@@ -16,15 +16,15 @@ class Consumer(MessageProc):
                 Message(
                     'stop',
                     action=lambda: sys.exit()))
-            n=n+1
-            if n==1000:
-                print("it was stuck")
-                break;
+            #n=n+1
+            #if n==1000:
+             #   print("it was stuck")
+              #  break;
 
 if __name__=='__main__': # really do need this
     me = MessageProc()
     me.main()
     consumer = Consumer().start()
-    for num in range(10):
+    for num in range(100):
         me.give(consumer, 'data', num + 1)
     me.give(consumer, 'stop')

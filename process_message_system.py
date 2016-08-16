@@ -3,15 +3,13 @@ import os
 import pickle
 import time
 import threading
+import atexit
+import queue
 
 
 class MessageProc():
 
-    def __init__(self):
-        # Get threading condition
-        #self.messageCondition = threading.Condition()
-        pass
-
+    global communcation_queue
 
     # set up communication mechanism (named pipes)
     def main(self):
@@ -19,9 +17,14 @@ class MessageProc():
         # create named pipe
         os.mkfifo('/tmp/pipe' + str(os.getpid()))
 
+        communcation_queue = queue.Queue()
+
+        # Get threading condition - robert lecture
+        self.arriveCondition = threading.Condition()
+
         # set up thread
-        #read_thread = threading.Thread(target=self.receive, daemon=True)
-        #read_thread.start()
+        transfer_thread = threading.Thread(target=self.extract_from_pipe, daemon=True)
+        transfer_thread.start()
 
 
 
@@ -61,99 +64,109 @@ class MessageProc():
         tup = []
         tup.append(pid)
         tup.append(messageID)
-        tup.append(values)
+
+        if values:
+            tup.append(*values)
+
         pickle.dump(tup, fifo)
 
         print(tup)
 
 
-        # From Tutorial 3 code
-        # Automatic acquire/release of the underlying lock
-       # with self.messageCondition:
-            # notify the waiting thread that the resource is now ready
-        #    self.messageCondition.notify()
-
-
-        # parent fork gives the message
-
-        # print('in give()')
-        # print('messageID is '+str(messageID))
-
-        #pass
 
     # check out os atExit and clean up named pipes
 
     # check message does not exist in queue and remove executed messages
     def receive(self, *messages):
-
         pipe = '/tmp/pipe' + str(os.getpid())
-
-        print('in receive')
 
         # check communitcation process is up else sleep for a bit
         if not os.path.exists(pipe):
             time.sleep(0.01)
 
-
         fifo = open(pipe, 'rb')
+
+        print('in receive')
 
         #From rob's code in lecture recording 9
         while True:
-            #wait for data to be in pipe
-            message = pickle.load(fifo)
 
-            print('receive'+str(message))
+            # From Tutorial 3 code
+            # Automatic acquire/release of the underlying lock
+            with self.messageCondition:
+            # notify the waiting thread that the resource is now ready
+                self.messageCondition.wait()
+
+            #get data from queue
+            data =  communcation_queue.get()
+
+            print(data)
 
             for mess in messages:
-                if mess.messageID == 'ANY':
-                    mess.action()
-                elif mess.messageID == message[1]:
+                if mess.messageID == 'ANY' or mess.messageID == data[1]:
                     print('match')
-                    mess.action(message[2])
+
+                    #if there is no value given
+                    if len(data)==2:
+                        print('there is no value')
+                        mess.action()
+
+                    else:
+                        mess.action(data[2])
+
                 else:
                     pass
 
 
 
 
-            # From Tutorial 3 code
-            # Automatic acquire/release of the underlying lock
-           # with self.messageCondition:
-                # notify the waiting thread that the resource is now ready
-            #    self.messageCondition.wait()
+
+            # message = pickle.load(fifo)
+            #
+            # print('receive'+str(message))
+            #
+            # for mess in messages:
+            #     if mess.messageID == 'ANY' or mess.messageID == message[1]:
+            #         print('match')
+            #
+            #         #if there is no value given
+            #         if len(message)==2:
+            #             print('there is no value')
+            #             mess.action()
+            #
+            #         else:
+            #             mess.action(message[2])
+            #
+            #     else:
+            #         pass
 
 
 
 
+    #taken from Robert's lecture recording 9 video
+    def extract_from_pipe(self):
+        pipe = '/tmp/pipe' + str(os.getpid())
+
+        with open(pipe,'rb') as readPipe:
+            while True:
+                try:
+                    message = pickle.load(readPipe)
+                    with self.arriveCondition:
+                        self.communcation_queue.put(message)
+                        self.arriveCondition.notify()
+                except EOFError:
+                    time.sleep(0.01)
 
 
 
-        # child fork recieves the message
-
-        #for mess in messages:
-
-            # if message ID is ANY then execute first item in give queue
-         #   if mess.messageID == 'ANY':
-          #      pass
-
-           # else:
-            #    pass
-
-
-
-
-            # put time out here
-
-        pass
-
-    # what to do when system ends
-    def removeGarbage(self):
-        pass
-
-    # remove all pipes
-
-    # import atexit
-    # atexit.register(removeGarbage())
+# what to do when system ends
+# def removeGarbage(self):
+#     pass
+#
+#     # remove all pipes
+#
+#
+# atexit.register(removeGarbage())
 
 
 class Message():
