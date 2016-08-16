@@ -3,9 +3,11 @@ ytso868
 6521229
 
 Q1.
+In order to ensure that messages from different processors using the same named pipe
+do not interleave, is that only one process is writing to the pipe and the second 
+process is reading the pipe
 
-
-
+locking ?
 
 
 
