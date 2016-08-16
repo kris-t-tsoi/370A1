@@ -67,9 +67,8 @@ class MessageProc():
 
         pickle.dump(tup, fifo)
 
-        print(tup)
 
-    # check out os atExit and clean up named pipes
+
 
     # check message does not exist in queue and remove executed messages
     def receive(self, *messages):
@@ -79,8 +78,6 @@ class MessageProc():
 
             # Check if queue is not empty, else wait for thread condition
             if not self.communcation_queue.empty():
-
-                print('queue not empty')
 
                 # get data from queue
                 data = self.communcation_queue.get()
@@ -102,21 +99,17 @@ class MessageProc():
 
                     #not what we want so put unused data into list
                     else:
-                        print('append into list')
-                        print(data)
                         self.passed_data_list.append(data)
+                        # self.passed_data_list.insert(data)
 
 
-            elif not self.passed_data_list:
-
-                print('move from list to queue')
+            elif self.communcation_queue.empty() and self.passed_data_list:
 
                 while True:
+                    self.passed_data_list.reverse()
                     item = self.passed_data_list.pop()
-                    print(item)
                     self.communcation_queue.put(item)
                     if not self.passed_data_list:
-                        print('end of list')
                         break
 
 

@@ -8,11 +8,8 @@ class Ordered(MessageProc):
             Message(
                 'go',
                 action=lambda: None))
-        print('past go')
 
         for i in range(2):
-
-            print('in range 1')
 
             self.receive(
                 Message(
@@ -22,8 +19,6 @@ class Ordered(MessageProc):
                     'one',
                     action=lambda: print('one')))
         for i in range(2):
-
-            print('in range 2')
 
             self.receive(
                 Message(
