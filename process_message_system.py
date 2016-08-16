@@ -15,7 +15,7 @@ class MessageProc():
     # set up communication mechanism (named pipes)
     def main(self):
 
-        # create named pipe
+        # create named pipevalue =
         os.mkfifo('/tmp/pipe' + str(os.getpid()))
 
         # Get threading condition - robert lecture
@@ -80,13 +80,11 @@ class MessageProc():
                 # get data from queue
                 data = self.communcation_queue.get()
 
-                # self.communcation_queue.task_done()
+                self.communcation_queue.task_done()
 
                 for mess in messages:
 
                     if mess.messageID == ANY or data[1] == mess.messageID:
-
-                        # value
 
                         # if there is no value given
                         if len(data) == 2:

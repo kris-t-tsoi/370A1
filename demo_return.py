@@ -8,7 +8,7 @@ class Return(MessageProc):
         value = self.receive(
             Message(
                 'two',
-                action=lambda: time.sleep(10)),
+                action=lambda: time.sleep(1)),
             Message(
                 'hi',
                 action=lambda: 2 * 2))
@@ -19,4 +19,4 @@ if __name__=='__main__': # really do need this
     me = MessageProc()
     me.main()
     example = Return().start()
-    me.give(example, 'hi')
+    me.give(example, 'two')
