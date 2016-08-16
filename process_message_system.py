@@ -86,14 +86,16 @@ class MessageProc():
 
                     if mess.messageID == ANY or data[1] == mess.messageID:
 
+                        # value
+
                         # if there is no value given
                         if len(data) == 2:
-                            mess.action()
+                            value = mess.action()
 
                         else:
-                            mess.action(data[2])
+                            value = mess.action(data[2])
 
-                        break;
+                        return value
 
             else:
                 # From Tutorial 3 code
@@ -128,7 +130,7 @@ def removeGarbagePipes ():
         if file.startswith('pipe'):
             os.remove(tmpPath + '/' + file)
 
-
+#at end of process do this
 atexit.register(removeGarbagePipes)
 
 
