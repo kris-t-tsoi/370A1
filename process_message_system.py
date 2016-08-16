@@ -9,7 +9,8 @@ import queue
 
 class MessageProc():
 
-    global communcation_queue
+    communcation_queue = queue.Queue()
+
 
     # set up communication mechanism (named pipes)
     def main(self):
@@ -17,7 +18,7 @@ class MessageProc():
         # create named pipe
         os.mkfifo('/tmp/pipe' + str(os.getpid()))
 
-        communcation_queue = queue.Queue()
+
 
         # Get threading condition - robert lecture
         self.arriveCondition = threading.Condition()
@@ -78,13 +79,13 @@ class MessageProc():
 
     # check message does not exist in queue and remove executed messages
     def receive(self, *messages):
-        pipe = '/tmp/pipe' + str(os.getpid())
-
-        # check communitcation process is up else sleep for a bit
-        if not os.path.exists(pipe):
-            time.sleep(0.01)
-
-        fifo = open(pipe, 'rb')
+        # pipe = '/tmp/pipe' + str(os.getpid())
+        #
+        # # check communitcation process is up else sleep for a bit
+        # if not os.path.exists(pipe):
+        #     time.sleep(0.01)
+        #
+        # fifo = open(pipe, 'rb')
 
         print('in receive')
 
@@ -93,14 +94,15 @@ class MessageProc():
 
             # From Tutorial 3 code
             # Automatic acquire/release of the underlying lock
-            with self.messageCondition:
+            with self.arriveCondition:
             # notify the waiting thread that the resource is now ready
-                self.messageCondition.wait()
+                self.arriveCondition.wait()
+
 
             #get data from queue
-            data =  communcation_queue.get()
+            data =  self.communcation_queue.get()
 
-            print(data)
+            self.communcation_queue.task_done()
 
             for mess in messages:
                 if mess.messageID == 'ANY' or mess.messageID == data[1]:
@@ -116,9 +118,6 @@ class MessageProc():
 
                 else:
                     pass
-
-
-
 
 
             # message = pickle.load(fifo)
@@ -145,6 +144,7 @@ class MessageProc():
 
     #taken from Robert's lecture recording 9 video
     def extract_from_pipe(self):
+
         pipe = '/tmp/pipe' + str(os.getpid())
 
         with open(pipe,'rb') as readPipe:
