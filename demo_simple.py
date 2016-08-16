@@ -25,6 +25,6 @@ if __name__=='__main__': # really do need this
     me = MessageProc()
     me.main()
     consumer = Consumer().start()
-    for num in range(100):
+    for num in range(1000):
         me.give(consumer, 'data', num + 1)
     me.give(consumer, 'stop')

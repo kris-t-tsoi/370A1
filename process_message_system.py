@@ -71,8 +71,6 @@ class MessageProc():
 
         pickle.dump(tup, fifo)
 
-        print(tup)
-
 
 
     # check out os atExit and clean up named pipes
@@ -87,37 +85,40 @@ class MessageProc():
         #
         # fifo = open(pipe, 'rb')
 
-        print('in receive')
 
         #From rob's code in lecture recording 9
         while True:
 
-            # From Tutorial 3 code
-            # Automatic acquire/release of the underlying lock
-            with self.arriveCondition:
-            # notify the waiting thread that the resource is now ready
-                self.arriveCondition.wait()
 
 
-            #get data from queue
-            data =  self.communcation_queue.get()
+            #Check if queue is not empty, else wait for thread condition
+            if not self.communcation_queue.empty():
+                # get data from queue
+                data = self.communcation_queue.get()
 
-            self.communcation_queue.task_done()
+                # self.communcation_queue.task_done()
 
-            for mess in messages:
-                if mess.messageID == 'ANY' or mess.messageID == data[1]:
-                    print('match')
+                for mess in messages:
+                    if mess.messageID == 'ANY' or mess.messageID == data[1]:
 
-                    #if there is no value given
-                    if len(data)==2:
-                        print('there is no value')
-                        mess.action()
+                        # if there is no value given
+                        if len(data) == 2:
+                            mess.action()
 
-                    else:
-                        mess.action(data[2])
+                        else:
+                            mess.action(data[2])
 
-                else:
-                    pass
+            else:
+                # From Tutorial 3 code
+                # Automatic acquire/release of the underlying lock
+                with self.arriveCondition:
+                # notify the waiting thread that the resource is now ready
+                    self.arriveCondition.wait()
+
+
+
+
+
 
 
             # message = pickle.load(fifo)
@@ -154,6 +155,7 @@ class MessageProc():
                     with self.arriveCondition:
                         self.communcation_queue.put(message)
                         self.arriveCondition.notify()
+
                 except EOFError:
                     time.sleep(0.01)
 
