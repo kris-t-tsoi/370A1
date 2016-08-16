@@ -125,7 +125,7 @@ def removeGarbagePipes ():
     tmpPath = '/tmp'
     files = os.listdir('/tmp')
     for file in files:
-        if file.startswith('/tmp/pipe'):
+        if file.startswith('pipe'):
             os.remove(tmpPath + '/' + file)
 
 
