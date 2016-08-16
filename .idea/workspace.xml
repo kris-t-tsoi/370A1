@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="63bf2973-3b17-4ce1-93c8-359eb5c1caa3" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/demo_simple.py" afterPath="$PROJECT_DIR$/demo_simple.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/demo_any.py" afterPath="$PROJECT_DIR$/demo_any.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/process_message_system.py" afterPath="$PROJECT_DIR$/process_message_system.py" />
     </list>
     <ignored path="370A1.iws" />
@@ -28,8 +28,8 @@
           <file leaf-file-name="process_message_system.py" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/process_message_system.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="300">
-                  <caret line="104" column="42" selection-start-line="104" selection-start-column="42" selection-end-line="104" selection-end-column="42" />
+                <state relative-caret-position="15">
+                  <caret line="93" column="53" selection-start-line="93" selection-start-column="53" selection-end-line="93" selection-end-column="53" />
                   <folding>
                     <element signature="e#0#10#0" expanded="true" />
                   </folding>
@@ -41,11 +41,11 @@
       </split-first>
       <split-second>
         <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-          <file leaf-file-name="demo_simple.py" pinned="false" current-in-tab="true">
+          <file leaf-file-name="demo_simple.py" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/demo_simple.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="405">
-                  <caret line="27" column="25" selection-start-line="27" selection-start-column="25" selection-end-line="27" selection-end-column="25" />
+                <state relative-caret-position="225">
+                  <caret line="15" column="24" selection-start-line="15" selection-start-column="24" selection-end-line="15" selection-end-column="24" />
                   <folding>
                     <element signature="e#0#36#0" expanded="true" />
                   </folding>
@@ -53,11 +53,11 @@
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="demo_any.py" pinned="false" current-in-tab="false">
+          <file leaf-file-name="demo_any.py" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/demo_any.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="240">
-                  <caret line="17" column="0" selection-start-line="17" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
+                <state relative-caret-position="450">
+                  <caret line="31" column="23" selection-start-line="31" selection-start-column="23" selection-end-line="31" selection-end-column="23" />
                   <folding />
                 </state>
               </provider>
@@ -73,9 +73,9 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/demo_any.py" />
-        <option value="$PROJECT_DIR$/process_message_system.py" />
         <option value="$PROJECT_DIR$/demo_simple.py" />
+        <option value="$PROJECT_DIR$/process_message_system.py" />
+        <option value="$PROJECT_DIR$/demo_any.py" />
       </list>
     </option>
   </component>
@@ -139,7 +139,7 @@
       <recent name="$PROJECT_DIR$" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.demo_simple">
+  <component name="RunManager" selected="Python.demo_any">
     <configuration default="false" name="demo_simple" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -314,8 +314,8 @@
     </list>
     <recent_temporary>
       <list size="2">
-        <item index="0" class="java.lang.String" itemvalue="Python.demo_simple" />
-        <item index="1" class="java.lang.String" itemvalue="Python.demo_any" />
+        <item index="0" class="java.lang.String" itemvalue="Python.demo_any" />
+        <item index="1" class="java.lang.String" itemvalue="Python.demo_simple" />
       </list>
     </recent_temporary>
   </component>
@@ -479,31 +479,31 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/demo_any.py">
+    <entry file="file://$PROJECT_DIR$/demo_simple.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="240">
-          <caret line="17" column="0" selection-start-line="17" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
-          <folding />
+        <state relative-caret-position="225">
+          <caret line="15" column="24" selection-start-line="15" selection-start-column="24" selection-end-line="15" selection-end-column="24" />
+          <folding>
+            <element signature="e#0#36#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/process_message_system.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="300">
-          <caret line="104" column="42" selection-start-line="104" selection-start-column="42" selection-end-line="104" selection-end-column="42" />
+        <state relative-caret-position="15">
+          <caret line="93" column="53" selection-start-line="93" selection-start-column="53" selection-end-line="93" selection-end-column="53" />
           <folding>
             <element signature="e#0#10#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/demo_simple.py">
+    <entry file="file://$PROJECT_DIR$/demo_any.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="405">
-          <caret line="27" column="25" selection-start-line="27" selection-start-column="25" selection-end-line="27" selection-end-column="25" />
-          <folding>
-            <element signature="e#0#36#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="450">
+          <caret line="31" column="23" selection-start-line="31" selection-start-column="23" selection-end-line="31" selection-end-column="23" />
+          <folding />
         </state>
       </provider>
     </entry>

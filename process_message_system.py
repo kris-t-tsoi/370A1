@@ -6,6 +6,7 @@ import threading
 import atexit
 import queue
 
+ANY = 'any'
 
 class MessageProc():
 
@@ -26,7 +27,6 @@ class MessageProc():
         # set up thread
         transfer_thread = threading.Thread(target=self.extract_from_pipe, daemon=True)
         transfer_thread.start()
-
 
 
     # start up a new process and return process id to parent process
@@ -73,33 +73,29 @@ class MessageProc():
 
 
 
+
     # check out os atExit and clean up named pipes
 
     # check message does not exist in queue and remove executed messages
     def receive(self, *messages):
-        # pipe = '/tmp/pipe' + str(os.getpid())
-        #
-        # # check communitcation process is up else sleep for a bit
-        # if not os.path.exists(pipe):
-        #     time.sleep(0.01)
-        #
-        # fifo = open(pipe, 'rb')
+
 
 
         #From rob's code in lecture recording 9
         while True:
 
 
-
             #Check if queue is not empty, else wait for thread condition
             if not self.communcation_queue.empty():
+
                 # get data from queue
                 data = self.communcation_queue.get()
 
                 # self.communcation_queue.task_done()
 
                 for mess in messages:
-                    if mess.messageID == 'ANY' or mess.messageID == data[1]:
+
+                    if mess.messageID == ANY or data[1] == mess.messageID:
 
                         # if there is no value given
                         if len(data) == 2:
@@ -108,37 +104,19 @@ class MessageProc():
                         else:
                             mess.action(data[2])
 
+                        break;
+
             else:
                 # From Tutorial 3 code
                 # Automatic acquire/release of the underlying lock
                 with self.arriveCondition:
+
                 # notify the waiting thread that the resource is now ready
                     self.arriveCondition.wait()
 
 
 
 
-
-
-
-            # message = pickle.load(fifo)
-            #
-            # print('receive'+str(message))
-            #
-            # for mess in messages:
-            #     if mess.messageID == 'ANY' or mess.messageID == message[1]:
-            #         print('match')
-            #
-            #         #if there is no value given
-            #         if len(message)==2:
-            #             print('there is no value')
-            #             mess.action()
-            #
-            #         else:
-            #             mess.action(message[2])
-            #
-            #     else:
-            #         pass
 
 
 
