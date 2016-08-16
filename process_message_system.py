@@ -8,10 +8,9 @@ import queue
 
 ANY = 'any'
 
+
 class MessageProc():
-
     communcation_queue = queue.Queue()
-
 
     # set up communication mechanism (named pipes)
     def main(self):
@@ -19,15 +18,12 @@ class MessageProc():
         # create named pipe
         os.mkfifo('/tmp/pipe' + str(os.getpid()))
 
-
-
         # Get threading condition - robert lecture
         self.arriveCondition = threading.Condition()
 
         # set up thread
         transfer_thread = threading.Thread(target=self.extract_from_pipe, daemon=True)
         transfer_thread.start()
-
 
     # start up a new process and return process id to parent process
     def start(self):
@@ -44,7 +40,6 @@ class MessageProc():
         else:
             # return pid of the child fork
             return pid
-
 
     # send the input parameter message items it receives to the recieve()
     # pid - pid of child fork
@@ -71,21 +66,15 @@ class MessageProc():
 
         pickle.dump(tup, fifo)
 
-
-
-
     # check out os atExit and clean up named pipes
 
     # check message does not exist in queue and remove executed messages
     def receive(self, *messages):
 
-
-
-        #From rob's code in lecture recording 9
+        # From rob's code in lecture recording 9
         while True:
 
-
-            #Check if queue is not empty, else wait for thread condition
+            # Check if queue is not empty, else wait for thread condition
             if not self.communcation_queue.empty():
 
                 # get data from queue
@@ -111,22 +100,15 @@ class MessageProc():
                 # Automatic acquire/release of the underlying lock
                 with self.arriveCondition:
 
-                # notify the waiting thread that the resource is now ready
+                    # notify the waiting thread that the resource is now ready
                     self.arriveCondition.wait()
 
-
-
-
-
-
-
-
-    #taken from Robert's lecture recording 9 video
+    # taken from Robert's lecture recording 9 video
     def extract_from_pipe(self):
 
         pipe = '/tmp/pipe' + str(os.getpid())
 
-        with open(pipe,'rb') as readPipe:
+        with open(pipe, 'rb') as readPipe:
             while True:
                 try:
                     message = pickle.load(readPipe)
@@ -138,15 +120,16 @@ class MessageProc():
                     time.sleep(0.01)
 
 
-
 # what to do when system ends
-# def removeGarbage(self):
-#     pass
-#
-#     # remove all pipes
-#
-#
-# atexit.register(removeGarbage())
+def removeGarbagePipes ():
+    tmpPath = '/tmp'
+    files = os.listdir('/tmp')
+    for file in files:
+        if file.startswith('/tmp/pipe'):
+            os.remove(tmpPath + '/' + file)
+
+
+atexit.register(removeGarbagePipes)
 
 
 class Message():
@@ -154,7 +137,7 @@ class Message():
         self.messageID = messageID
         self.action = action
 
-    # pass
+        # pass
 
 
 class TimeOut():
