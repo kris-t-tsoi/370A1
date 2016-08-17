@@ -15,6 +15,7 @@ class MessageProc():
     #queue and list to store give() data
     communcation_queue = queue.Queue()
     passed_data_list = []
+    data_list = []
 
 
 
@@ -22,14 +23,16 @@ class MessageProc():
     def main(self, *process):
 
         # create named pipe
-        os.mkfifo('/tmp/pipe' + str(os.getpid()))
+        pipe = '/tmp/pipe' + str(os.getpid())
+        if not os.path.exists(pipe):
+            os.mkfifo(pipe)
 
         # Get threading condition - robert lecture
         self.arriveCondition = threading.Condition()
 
         # set up thread
         transfer_thread = threading.Thread(target=self.extract_from_pipe, daemon=True)
-        transfer_thread.start(*process)
+        transfer_thread.start()
 
 
 
@@ -43,6 +46,8 @@ class MessageProc():
         if pid == 0:
             # go into the main()
             self.main(*processes)
+
+            sys.exit()
 
         # if parent fork
         else:
@@ -80,54 +85,79 @@ class MessageProc():
     # check message does not exist in queue and remove executed messages
     def receive(self, *messages):
 
+        # #Check if message is a Timeout
+        # if type(mess) == TimeOut:
+        #
+        #     print('message is time out')
+        #     print(mess)
+        #
+        #
+        #
+        #     # pass
+        # else:
+
         # From rob's code in lecture recording 9
         while True:
 
-            # Check if queue is not empty, else wait for thread condition
-            if not self.communcation_queue.empty():
 
-                # get data from queue
-                data = self.communcation_queue.get()
-                self.communcation_queue.task_done()
+           
+            for item in self.data_list:
 
-                #compare give() data to messages recieved by recieve()
+                # compare give() data to messages recieved by recieve()
                 for mess in messages:
 
-                    #Check if it is the correct message
-                    if mess.messageID == ANY or data[1] == mess.messageID:
+                    # Check if it is the correct message
+                    if (mess.messageID == ANY or item[1] == mess.messageID) and mess.guard():
 
-                        #Check if it passes the guard
-                        if mess.guard():
+                        # if there is no value given
+                        if len(item) == 2:
+                            value = mess.action()
 
-                            # if there is no value given
-                            if len(data) == 2:
-                                value = mess.action()
-
-                            else:
-                                value = mess.action(data[2])
-
-                            return value
-
-                        # not pass guard so store into list
                         else:
-                            self.passed_data_list.append(data)
+                            value = mess.action(item[2])
+
+                        self.data_list.remove(item)
+                        return value
 
 
-                    #not matching give() data so store into list
-                    else:
-                        self.passed_data_list.append(data)
 
-            #if queue is empty and there are values in the list
-            #push contents of list back into queue
-            elif self.communcation_queue.empty() and self.passed_data_list:
-
-                while True:
-                    self.passed_data_list.reverse()
-                    item = self.passed_data_list.pop()
-                    self.communcation_queue.put(item)
-                    #if list is empty, break
-                    if not self.passed_data_list:
-                        break
+            # # Check if queue is not empty, else wait for thread condition
+            # if not self.communcation_queue.empty():
+            #
+            #     # get data from queue
+            #     data = self.communcation_queue.get()
+            #     self.communcation_queue.task_done()
+            #
+            #     #compare give() data to messages recieved by recieve()
+            #     for mess in messages:
+            #
+            #
+            #             #Check if it is the correct message
+            #         if (mess.messageID == ANY or data[1] == mess.messageID) and mess.guard():
+            #
+            #             # if there is no value given
+            #             if len(data) == 2:
+            #                 value = mess.action()
+            #
+            #             else:
+            #                 value = mess.action(data[2])
+            #
+            #             return value
+            #
+            #         else:
+            #             self.passed_data_list.append(data)
+            #
+            # #if queue is empty and there are values in the list
+            # #push contents of list back into queue
+            # elif self.communcation_queue.empty() and self.passed_data_list:
+            #
+            #     while True:
+            #         self.passed_data_list.reverse()
+            #         item = self.passed_data_list.pop()
+            #         self.communcation_queue.put(item)
+            #         #if list is empty, break
+            #         if not self.passed_data_list:
+            #             break
 
             #if there is no data recieved, wait
             else:
@@ -151,6 +181,7 @@ class MessageProc():
                     message = pickle.load(readPipe)
                     with self.arriveCondition:
                         self.communcation_queue.put(message)
+                        self.data_list.append(message)
                         self.arriveCondition.notify()
 
                 except EOFError:
@@ -181,4 +212,7 @@ class Message():
 
 #------------------------------------------------------------------------------------
 class TimeOut():
-    pass
+
+    def __init__(self, waitTime, action=lambda: None):
+        self.waitTime = waitTime
+        self.action = action

@@ -73,6 +73,8 @@ if __name__=='__main__': # really do need this
     me.receive(
         Message(
             'finished'))
+
+
     total = 0
     for consumer in consumers:
         me.give(consumer, 'stop')
