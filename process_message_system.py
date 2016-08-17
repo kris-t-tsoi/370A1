@@ -34,6 +34,9 @@ class MessageProc():
         transfer_thread = threading.Thread(target=self.extract_from_pipe, daemon=True)
         transfer_thread.start()
 
+        # at end of process do this
+        atexit.register(removeGarbagePipes)
+
 
 
     # start up a new process and return process id to parent process
@@ -47,6 +50,7 @@ class MessageProc():
             # go into the main()
             self.main(*processes)
 
+            time.sleep(0.1)
             sys.exit()
 
         # if parent fork
@@ -65,19 +69,15 @@ class MessageProc():
         # check communication process is up else sleep for a bit
         pipe = '/tmp/pipe' + str(pid)
         if not os.path.exists(pipe):
-            time.sleep(0.01)
+            time.sleep(0.05)
 
         fifo = open(pipe, 'wb')
 
-        #store data from give() into a list
-        tup = []
-        tup.append(pid)
-        tup.append(messageID)
-        if values:
-            tup.append(*values)
+        print(messageID, values)
 
+        #store data from give() into a list
         #put data into pipe
-        pickle.dump(tup, fifo)
+        pickle.dump([messageID, values], fifo)
 
 
 
@@ -91,80 +91,39 @@ class MessageProc():
                 print('message is time out')
                 print(mess)
 
-
-
-
         # From rob's code in lecture recording 9
         while True:
 
             for item in self.data_list:
 
+                print('receive get from list')
+                print(item)
+
                 # compare give() data to messages recieved by recieve()
                 for mess in messages:
-
-                    print(mess.messageID)
-
                     # Check if it is the correct message
-                    if (mess.messageID == ANY or item[1] == mess.messageID) and mess.guard():
-
-                        # if there is no value given
-                        if len(item) == 2:
-                            value = mess.action()
-
-                        else:
-                            value = mess.action(item[2])
-
+                    if (mess.messageID == ANY or item[0] == mess.messageID) and mess.guard():
+                        print('items')
+                        print(item)
                         self.data_list.remove(item)
-                        return value
+                        return mess.action(*item[1])
+
+
+                print('end of for loop')
+
+            print('outside')
 
 
 
-            # # Check if queue is not empty, else wait for thread condition
-            # if not self.communcation_queue.empty():
-            #
-            #     # get data from queue
-            #     data = self.communcation_queue.get()
-            #     self.communcation_queue.task_done()
-            #
-            #     #compare give() data to messages recieved by recieve()
-            #     for mess in messages:
-            #
-            #
-            #             #Check if it is the correct message
-            #         if (mess.messageID == ANY or data[1] == mess.messageID) and mess.guard():
-            #
-            #             # if there is no value given
-            #             if len(data) == 2:
-            #                 value = mess.action()
-            #
-            #             else:
-            #                 value = mess.action(data[2])
-            #
-            #             return value
-            #
-            #         else:
-            #             self.passed_data_list.append(data)
-            #
-            # #if queue is empty and there are values in the list
-            # #push contents of list back into queue
-            # elif self.communcation_queue.empty() and self.passed_data_list:
-            #
-            #     while True:
-            #         self.passed_data_list.reverse()
-            #         item = self.passed_data_list.pop()
-            #         self.communcation_queue.put(item)
-            #         #if list is empty, break
-            #         if not self.passed_data_list:
-            #             break
 
-            #if there is no data recieved, wait
-            else:
-                # From Tutorial 3 code
-                # Automatic acquire/release of the underlying lock
-                with self.arriveCondition:
+            # #if there is no data recieved, wait
+            # else:
+            # From Tutorial 3 code
+            # Automatic acquire/release of the underlying lock
+            with self.arriveCondition:
 
-                    # notify the waiting thread that the resource is now ready
-                    self.arriveCondition.wait()
+                # notify the waiting thread that the resource is now ready
+                self.arriveCondition.wait()
 
 
 
@@ -178,7 +137,6 @@ class MessageProc():
                 try:
                     message = pickle.load(readPipe)
                     with self.arriveCondition:
-                        # self.communcation_queue.put(message)
                         self.data_list.append(message)
                         self.arriveCondition.notify()
 
@@ -190,14 +148,15 @@ class MessageProc():
 # ------------------------------------------------------------------------------------
 # called when system ends to delete pipes
 def removeGarbagePipes ():
+
+    time.sleep(.1)
+
     tmpPath = '/tmp'
     files = os.listdir('/tmp')
     for file in files:
         if file.startswith('pipe'):
             os.remove(tmpPath + '/' + file)
 
-#at end of process do this
-atexit.register(removeGarbagePipes)
 
 #------------------------------------------------------------------------------------
 class Message():
