@@ -13,8 +13,8 @@ ANY = 'any'
 class MessageProc():
 
     #queue and list to store give() data
-    communcation_queue = queue.Queue()
-    passed_data_list = []
+    # communcation_queue = queue.Queue()
+    # passed_data_list = []
     data_list = []
 
 
@@ -85,26 +85,24 @@ class MessageProc():
     # check message does not exist in queue and remove executed messages
     def receive(self, *messages):
 
-        # #Check if message is a Timeout
-        # if type(mess) == TimeOut:
-        #
-        #     print('message is time out')
-        #     print(mess)
-        #
-        #
-        #
-        #     # pass
-        # else:
+        for mess in messages:
+            # Check if message is a Timeout
+            if type(mess) == TimeOut:
+                print('message is time out')
+                print(mess)
+
+
+
 
         # From rob's code in lecture recording 9
         while True:
 
-
-           
             for item in self.data_list:
 
                 # compare give() data to messages recieved by recieve()
                 for mess in messages:
+
+                    print(mess.messageID)
 
                     # Check if it is the correct message
                     if (mess.messageID == ANY or item[1] == mess.messageID) and mess.guard():
@@ -180,7 +178,7 @@ class MessageProc():
                 try:
                     message = pickle.load(readPipe)
                     with self.arriveCondition:
-                        self.communcation_queue.put(message)
+                        # self.communcation_queue.put(message)
                         self.data_list.append(message)
                         self.arriveCondition.notify()
 
