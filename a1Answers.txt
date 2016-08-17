@@ -3,26 +3,26 @@ ytso868
 6521229
 
 Q1.
-In order to ensure that messages from different processors using the same named pipe
-do not interleave, is that only one process is writing to the pipe and the second 
-process is reading the pipe
-
-locking ?
-
+In order for messages not to be interleaved when mulitple processors are using 
+the same named pipe is to ensure that there is only one process that is writing to
+the named piped and one process that is receieving from the pipe. This results in
+the named pipe acting as a queue so the first data item that was passed in is 
+the first data item to be removed out of the named pipe
 
 
 Q2.
-
-
-
-
+The buffer_space list in the buffer class do not need to be protected by a lock as
+only a single processor is appending to and popping values from the buffer_space 
+list, therefore there is no need to worry about duplicate or missing values in the
+list due to multiple processors trying to change the list at the same time.
 
 
 Q3.
-
-
-
-
+A security issue involving using the process id as the message passing identifier 
+is that the system does not generate truely random the process id numbers.
+This means that malicious users could easily figure out the process id number and 
+use the process id to gain access to the messages being passed, this puts the 
+integrity of the data being passed at risk.
 
 
 Q4.

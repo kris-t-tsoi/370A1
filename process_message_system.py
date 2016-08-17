@@ -93,6 +93,7 @@ class MessageProc():
             # Check if message is a Timeout
             if type(mess) == TimeOut:
                 time = mess.waitTime
+                starttime = time.time()
 
 
 
@@ -120,7 +121,6 @@ class MessageProc():
             with self.arriveCondition:
 
                 if not time == None:
-                    starttime = time.time()
                     self.arriveCondition.wait(time)
                     endtime = time.time()
 
