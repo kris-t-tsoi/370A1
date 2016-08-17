@@ -73,8 +73,6 @@ class MessageProc():
 
         fifo = open(pipe, 'wb')
 
-        print(messageID, values)
-
         #store data from give() into a list
         #put data into pipe
         pickle.dump([messageID, values], fifo)
@@ -95,26 +93,12 @@ class MessageProc():
         while True:
 
             for item in self.data_list:
-
-                print('receive get from list')
-                print(item)
-
                 # compare give() data to messages recieved by recieve()
                 for mess in messages:
                     # Check if it is the correct message
                     if (mess.messageID == ANY or item[0] == mess.messageID) and mess.guard():
-                        print('items')
-                        print(item)
                         self.data_list.remove(item)
                         return mess.action(*item[1])
-
-
-                print('end of for loop')
-
-            print('outside')
-
-
-
 
             # #if there is no data recieved, wait
             # else:

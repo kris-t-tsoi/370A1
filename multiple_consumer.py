@@ -49,14 +49,10 @@ class Consumer(MessageProc):
 
     def finish(self):
 
-        print('fish')
         self.give(self.main_proc, 'completed', self.count)
-        print('chips')
         sys.exit()
 
 def add_to_total(n):
-
-    print('in add')
 
     global total
     total += n
@@ -84,11 +80,9 @@ if __name__=='__main__': # really do need this
     total = 0
     for consumer in consumers:
         me.give(consumer, 'stop')
-        print('past')
         me.receive(
             Message(
                 'completed',
                 action=add_to_total))
-        print('here')
 
     print('The total number processed was', total)
