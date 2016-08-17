@@ -11,13 +11,17 @@ ANY = 'any'
 
 #------------------------------------------------------------------------------------
 class MessageProc():
+
+    #queue and list to store give() data
     communcation_queue = queue.Queue()
     passed_data_list = []
 
-    # set up communication mechanism (named pipes)
-    def main(self):
 
-        # create named pipevalue =
+
+    # set up communication mechanism
+    def main(self, *process):
+
+        # create named pipe
         os.mkfifo('/tmp/pipe' + str(os.getpid()))
 
         # Get threading condition - robert lecture
@@ -25,10 +29,12 @@ class MessageProc():
 
         # set up thread
         transfer_thread = threading.Thread(target=self.extract_from_pipe, daemon=True)
-        transfer_thread.start()
+        transfer_thread.start(*process)
+
+
 
     # start up a new process and return process id to parent process
-    def start(self):
+    def start(self, *processes):
 
         # fork
         pid = os.fork()
@@ -36,12 +42,14 @@ class MessageProc():
         # If child fork
         if pid == 0:
             # go into the main()
-            self.main()
+            self.main(*processes)
 
         # if parent fork
         else:
             # return pid of the child fork
             return pid
+
+
 
     # send the input parameter message items it receives to the recieve()
     # pid - pid of child fork
@@ -49,23 +57,21 @@ class MessageProc():
     # values - not nessary to pass in
     def give(self, pid, messageID, *values):
 
+        # check communication process is up else sleep for a bit
         pipe = '/tmp/pipe' + str(pid)
-
-        # check communitcation process is up else sleep for a bit
         if not os.path.exists(pipe):
             time.sleep(0.01)
 
         fifo = open(pipe, 'wb')
 
-        # parent fork gives the message
-
+        #store data from give() into a list
         tup = []
         tup.append(pid)
         tup.append(messageID)
-
         if values:
             tup.append(*values)
 
+        #put data into pipe
         pickle.dump(tup, fifo)
 
 
@@ -82,14 +88,16 @@ class MessageProc():
 
                 # get data from queue
                 data = self.communcation_queue.get()
-
                 self.communcation_queue.task_done()
 
+                #compare give() data to messages recieved by recieve()
                 for mess in messages:
 
+                    #Check if it is the correct message
                     if mess.messageID == ANY or data[1] == mess.messageID:
 
-                        if mess.guard == None or mess.guard():
+                        #Check if it passes the guard
+                        if mess.guard():
 
                             # if there is no value given
                             if len(data) == 2:
@@ -100,22 +108,28 @@ class MessageProc():
 
                             return value
 
-                    #not what we want so put unused data into list
+                        # not pass guard so store into list
+                        else:
+                            self.passed_data_list.append(data)
+
+
+                    #not matching give() data so store into list
                     else:
                         self.passed_data_list.append(data)
-                        # self.passed_data_list.insert(data)
 
-
+            #if queue is empty and there are values in the list
+            #push contents of list back into queue
             elif self.communcation_queue.empty() and self.passed_data_list:
 
                 while True:
                     self.passed_data_list.reverse()
                     item = self.passed_data_list.pop()
                     self.communcation_queue.put(item)
+                    #if list is empty, break
                     if not self.passed_data_list:
                         break
 
-
+            #if there is no data recieved, wait
             else:
                 # From Tutorial 3 code
                 # Automatic acquire/release of the underlying lock
@@ -145,7 +159,7 @@ class MessageProc():
 
 
 # ------------------------------------------------------------------------------------
-# what to do when system ends
+# called when system ends to delete pipes
 def removeGarbagePipes ():
     tmpPath = '/tmp'
     files = os.listdir('/tmp')
@@ -158,7 +172,7 @@ atexit.register(removeGarbagePipes)
 
 #------------------------------------------------------------------------------------
 class Message():
-    def __init__(self, messageID, guard = None, action=None):
+    def __init__(self, messageID, guard = lambda: True, action= lambda: None):
         self.messageID = messageID
         self.action = action
         self.guard = guard
