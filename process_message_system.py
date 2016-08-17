@@ -15,6 +15,8 @@ class MessageProc():
     #queue and list to store give() data
     data_list = []
 
+    time = None
+
 
 
     # set up communication mechanism
@@ -85,15 +87,13 @@ class MessageProc():
     # check message does not exist in queue and remove executed messages
     def receive(self, *messages):
 
-        startTime = 0
-        endTime = 0
+
 
         for mess in messages:
             # Check if message is a Timeout
             if type(mess) == TimeOut:
+                time = mess.waitTime
 
-                with self.arriveCondition:
-                    self.arriveCondition.wait(mess.waitTime)
 
 
 
@@ -119,10 +119,14 @@ class MessageProc():
             # Automatic acquire/release of the underlying lock
             with self.arriveCondition:
 
+                if not time == None:
+                    starttime = time.time()
+                    self.arriveCondition.wait(time)
+                    endtime = time.time()
 
-
-                # notify the waiting thread that the resource is now ready
-                self.arriveCondition.wait()
+                else:
+                    # notify the waiting thread that the resource is now ready
+                    self.arriveCondition.wait()
 
 
 

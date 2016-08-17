@@ -21,7 +21,7 @@ class Flusher(MessageProc):
                 ANY,
                 action=self.flush), # recursively call the flush method
             TimeOut(
-                0,
+                2,
                 action=lambda: None)) # when no more messages return
 
 if __name__=='__main__':
