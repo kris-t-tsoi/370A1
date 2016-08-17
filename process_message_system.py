@@ -13,8 +13,6 @@ ANY = 'any'
 class MessageProc():
 
     #queue and list to store give() data
-    # communcation_queue = queue.Queue()
-    # passed_data_list = []
     data_list = []
 
 
@@ -29,6 +27,7 @@ class MessageProc():
 
         # Get threading condition - robert lecture
         self.arriveCondition = threading.Condition()
+
 
         # set up thread
         transfer_thread = threading.Thread(target=self.extract_from_pipe, daemon=True)
@@ -77,22 +76,36 @@ class MessageProc():
         #put data into pipe
         pickle.dump([messageID, values], fifo)
 
+        print('give')
+        print([messageID, values])
+
 
 
 
     # check message does not exist in queue and remove executed messages
     def receive(self, *messages):
 
+        startTime = 0
+        endTime = 0
+
         for mess in messages:
             # Check if message is a Timeout
             if type(mess) == TimeOut:
-                print('message is time out')
-                print(mess)
+
+                with self.arriveCondition:
+                    self.arriveCondition.wait(mess.waitTime)
+
+
 
         # From rob's code in lecture recording 9
         while True:
 
             for item in self.data_list:
+
+                print('receive')
+                print(item)
+
+
                 # compare give() data to messages recieved by recieve()
                 for mess in messages:
                     # Check if it is the correct message
@@ -106,8 +119,12 @@ class MessageProc():
             # Automatic acquire/release of the underlying lock
             with self.arriveCondition:
 
+
+
                 # notify the waiting thread that the resource is now ready
                 self.arriveCondition.wait()
+
+
 
 
 
