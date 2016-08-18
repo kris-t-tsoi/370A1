@@ -89,7 +89,6 @@ class MessageProc():
         #Each timeout is unique to each recieve
         timeoutValue = None
         timeoutAction = None
-        # starttime = 0.0
 
         #Check if there a Timeout object
         for mess in messages:
@@ -103,7 +102,7 @@ class MessageProc():
         while True:
 
             for item in self.data_list:
-
+                #
                 # print('receive')
                 # print(item)
 
@@ -119,9 +118,6 @@ class MessageProc():
             # From Tutorial 3 code
             # Automatic acquire/release of the underlying lock
             with self.arriveCondition:
-
-                print('some arrived')
-
                 #if there was a timeout message
                 if not timeoutValue == None:
 
@@ -130,13 +126,14 @@ class MessageProc():
                         # start timing once receive message
                         # starttime = time.time()
                         # wait the given time
+                    print('before time out wait')
                     timedOut = self.arriveCondition.wait(timeoutValue)
+                    print('after timeout wait')
 
                     if not timedOut:
                         print('timed out')
-                        timeoutAction()
-                    else:
-                        print('message reieved')
+                        return timeoutAction()
+                        # timeoutValue == None
 
                     # endtime = time.time()
 
@@ -148,6 +145,8 @@ class MessageProc():
                     #     starttime = 0.0
 
                 else:
+
+                    # print('normal wait')
                     # notify the waiting thread that the resource is now ready
                     self.arriveCondition.wait()
 
