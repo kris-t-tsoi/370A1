@@ -6,6 +6,11 @@ import threading
 import atexit
 import queue
 
+#SOFTENG 370
+#Yee Wing Kristy Tsoi
+#ytso868
+#6521229
+
 #state global variables
 ANY = 'any'
 
@@ -15,8 +20,6 @@ class MessageProc():
 
     #queue and list to store give() data
     data_list = []
-
-
 
     # set up communication mechanism
     def main(self, *process):
@@ -108,10 +111,11 @@ class MessageProc():
             # From Tutorial 3 code
             # Automatic acquire/release of the underlying lock
             with self.arriveCondition:
+                
                 #if there was a timeout message
                 if not timeoutValue == None:
                     startTime = time.time()
-                    timedOut = self.arriveCondition.wait(timeoutValue)
+                    self.arriveCondition.wait(timeoutValue)
                     finishTime = time.time()
 
                     timeoutValue = timeoutValue - (finishTime-startTime)

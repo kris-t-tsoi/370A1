@@ -22,7 +22,7 @@ A security issue involving using the process id as the message passing identifie
 is that the system does not generate truely random the process id numbers.
 This means that malicious users could easily figure out the process id number and 
 use the process id to gain access to the messages being passed, this puts the 
-integrity of the data being passed at risk.
+integrity of the data being passed through at risk.
 
 
 Q4.
