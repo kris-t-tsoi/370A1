@@ -77,11 +77,6 @@ class MessageProc():
         #put data into pipe
         pickle.dump([messageID, values], fifo)
 
-        # print('give')
-        # print([messageID, values])
-
-
-
 
     # check message does not exist in queue and remove executed messages
     def receive(self, *messages):
@@ -102,11 +97,6 @@ class MessageProc():
         while True:
 
             for item in self.data_list:
-                #
-                # print('receive')
-                # print(item)
-
-
                 # compare give() data to messages recieved by recieve()
                 for mess in messages:
                     # Check if it is the correct message
@@ -120,38 +110,19 @@ class MessageProc():
             with self.arriveCondition:
                 #if there was a timeout message
                 if not timeoutValue == None:
-
-
-                    # if not starttime == 0.0:
-                        # start timing once receive message
-                        # starttime = time.time()
-                        # wait the given time
-                    print('before time out wait')
+                    startTime = time.time()
                     timedOut = self.arriveCondition.wait(timeoutValue)
-                    print('after timeout wait')
+                    finishTime = time.time()
 
-                    if not timedOut:
-                        print('timed out')
+                    timeoutValue = timeoutValue - (finishTime-startTime)
+
+                    if not timeoutValue <= 0:
                         return timeoutAction()
-                        # timeoutValue == None
-
-                    # endtime = time.time()
-
-                    # if(endtime-starttime)>timeoutValue:
-                    #     print('timedout')
-                    #     timeoutAction()
-                    # else:
-                    #     print('message came')
-                    #     starttime = 0.0
 
                 else:
-
-                    # print('normal wait')
                     # notify the waiting thread that the resource is now ready
                     self.arriveCondition.wait()
 
-    def timeoutCancelled(self):
-        pass
 
 
     # taken from Robert's lecture recording 9 video
