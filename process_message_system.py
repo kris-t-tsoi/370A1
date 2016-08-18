@@ -9,13 +9,12 @@ import queue
 #state global variables
 ANY = 'any'
 
+
 #------------------------------------------------------------------------------------
 class MessageProc():
 
     #queue and list to store give() data
     data_list = []
-
-    time = None
 
 
 
@@ -26,6 +25,7 @@ class MessageProc():
         pipe = '/tmp/pipe' + str(os.getpid())
         if not os.path.exists(pipe):
             os.mkfifo(pipe)
+
 
         # Get threading condition - robert lecture
         self.arriveCondition = threading.Condition()
@@ -74,12 +74,11 @@ class MessageProc():
 
         fifo = open(pipe, 'wb')
 
-        #store data from give() into a list
         #put data into pipe
         pickle.dump([messageID, values], fifo)
 
-        print('give')
-        print([messageID, values])
+        # print('give')
+        # print([messageID, values])
 
 
 
@@ -87,15 +86,14 @@ class MessageProc():
     # check message does not exist in queue and remove executed messages
     def receive(self, *messages):
 
+        #Each timeout is unique to each recieve
+        timeoutValue = None
 
-
+        #Check if there a Timeout object
         for mess in messages:
             # Check if message is a Timeout
             if type(mess) == TimeOut:
-                time = mess.waitTime
-                starttime = time.time()
-
-
+                timeoutValue = mess.waitTime
 
 
         # From rob's code in lecture recording 9
@@ -103,8 +101,8 @@ class MessageProc():
 
             for item in self.data_list:
 
-                print('receive')
-                print(item)
+                # print('receive')
+                # print(item)
 
 
                 # compare give() data to messages recieved by recieve()
@@ -114,13 +112,17 @@ class MessageProc():
                         self.data_list.remove(item)
                         return mess.action(*item[1])
 
-            # #if there is no data recieved, wait
-            # else:
+
             # From Tutorial 3 code
             # Automatic acquire/release of the underlying lock
             with self.arriveCondition:
 
-                if not time == None:
+                #if there was a timeout message
+                if not timeoutValue == None:
+                    #start timing once receive message
+                    starttime = time.time()
+
+                    #wait the given time
                     self.arriveCondition.wait(time)
                     endtime = time.time()
 
