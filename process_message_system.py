@@ -88,12 +88,15 @@ class MessageProc():
 
         #Each timeout is unique to each recieve
         timeoutValue = None
+        timeoutAction = None
+        # starttime = 0.0
 
         #Check if there a Timeout object
         for mess in messages:
             # Check if message is a Timeout
             if type(mess) == TimeOut:
                 timeoutValue = mess.waitTime
+                timeoutAction = mess.action
 
 
         # From rob's code in lecture recording 9
@@ -117,21 +120,39 @@ class MessageProc():
             # Automatic acquire/release of the underlying lock
             with self.arriveCondition:
 
+                print('some arrived')
+
                 #if there was a timeout message
                 if not timeoutValue == None:
-                    #start timing once receive message
-                    starttime = time.time()
 
-                    #wait the given time
-                    self.arriveCondition.wait(time)
-                    endtime = time.time()
+
+                    # if not starttime == 0.0:
+                        # start timing once receive message
+                        # starttime = time.time()
+                        # wait the given time
+                    timedOut = self.arriveCondition.wait(timeoutValue)
+
+                    if not timedOut:
+                        print('timed out')
+                        timeoutAction()
+                    else:
+                        print('message reieved')
+
+                    # endtime = time.time()
+
+                    # if(endtime-starttime)>timeoutValue:
+                    #     print('timedout')
+                    #     timeoutAction()
+                    # else:
+                    #     print('message came')
+                    #     starttime = 0.0
 
                 else:
                     # notify the waiting thread that the resource is now ready
                     self.arriveCondition.wait()
 
-
-
+    def timeoutCancelled(self):
+        pass
 
 
     # taken from Robert's lecture recording 9 video
@@ -156,7 +177,7 @@ class MessageProc():
 # called when system ends to delete pipes
 def removeGarbagePipes ():
 
-    time.sleep(.1)
+    time.sleep(.15)
 
     tmpPath = '/tmp'
     files = os.listdir('/tmp')
